@@ -3,4 +3,7 @@
 	* AUTO_CHANEL.mq4’Ç‰Á  
 	* RCI_3LINEZ.mq4’Ç‰Á  
 	* SETTAI_RSI.mq4’Ç‰Á  
-	
+* 2020/1/7  
+	* MTF_HAL_MA_BAND.mq4’Ç‰Á
+	* MTF_VOLA_VOLA_CLOUD.mq4’Ç‰Á
+	* RANGE_DETECTIVE.mq4’Ç‰Á
