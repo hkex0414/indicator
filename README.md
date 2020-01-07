@@ -1,9 +1,10 @@
-# インジケーターソースアップロード用レポジトリ
+# 繧､繝ｳ繧ｸ繧ｱ繝ｼ繧ｿ繝ｼ繧ｽ繝ｼ繧ｹ繧｢繝�繝励Ο繝ｼ繝臥畑繝ｬ繝昴ず繝医Μ
 * 2020/1/6  
-	* AUTO_CHANEL.mq4追加  
-	* RCI_3LINEZ.mq4追加  
-	* SETTAI_RSI.mq4追加  
+	* AUTO_CHANEL.mq4霑ｽ蜉
+	* RCI_3LINEZ.mq4霑ｽ蜉
+	* SETTAI_RSI.mq4霑ｽ蜉
 * 2020/1/7  
-	* MTF_HAL_MA_BAND.mq4追加
-	* MTF_VOLA_VOLA_CLOUD.mq4追加
-	* RANGE_DETECTIVE.mq4追加
+	* MTF_HAL_MA_BAND.mq4霑ｽ蜉
+	* MTF_VOLA_VOLA_CLOUD.mq4霑ｽ蜉
+	* RANGE_DETECTIVE.mq4霑ｽ蜉
+	* TEMPLETE.mq4霑ｽ蜉
