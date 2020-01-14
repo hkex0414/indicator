@@ -21,15 +21,13 @@ double Sma800[];
 extern bool IsPushNotify = True; // Push通知とアラートのオンオフ
 
 string ReminingTime_sname = "bars_remining_time";
-// extern int Corner = 0;
 extern bool RemainingTimeEnabled = True; // 確定までの時間を表示する
 extern double LocationX = 1050;          // 確定までの残り時間を表示する場所（X座標）
 extern double LocationY = 20;            // 確定までの残り時間を表示する場所（Y座標）
 extern int FontSize = 20;                // 確定までの残り時間を表示する文字サイズ
 extern color FontColor = White;          // 確定までの残り時間を表示する文字色
 
-bool b4IsRangeStr;
-bool b4SellPerfect, b4BuyPerfect;
+bool b4IsSellPerfect, b4IsBuyPerfect;
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -79,29 +77,29 @@ int OnCalculate(const int rates_total, const int prev_calculated, const datetime
   double nowSma200pips = PriceToPips(nowSma144);
   double nowSma800pips = PriceToPips(nowSma144);
 
-  bool buyPerfect = nowEma62pips < nowSma144pips < nowSma200pips;
-  bool sellPerfect = nowEma62pips > nowSma144pips > nowSma200pips;
+  bool isBuyPerfect = nowEma62pips < nowSma144pips < nowSma200pips;
+  bool isSellPerfect = nowEma62pips > nowSma144pips > nowSma200pips;
 
   if (IsPushNotify)
   {
     // 買いパーフェクトオーダー
-    if (!b4BuyPerfect && isbuyPerfectRange)
+    if (!b4IsBuyPerfect && isBuyPerfect)
     {
       SendNotification(Symbol() + "BuyPerfectOrderRush.");
       Alert(Symbol() + "BuyPerfectOrderRush.");
     }
-    if (b4BuyPerfect && !isbuyPerfectRange)
+    if (b4IsBuyPerfect && !isBuyPerfect)
     {
       SendNotification(Symbol() + "BuyPerfectOrderBreak.");
       Alert(Symbol() + "BuyPerfectOrderBreak.");
     }
     // 売りパーフェクトオーダー
-    if (!b4BuyPerfect && isbuyPerfectRange)
+    if (!b4IsBuyPerfect && isSellPerfect)
     {
       SendNotification(Symbol() + "SellPerfectOrderRush.");
       Alert(Symbol() + "SellPerfectOrderRush.");
     }
-    if (b4BuyPerfect && !isbuyPerfectRange)
+    if (b4IsBuyPerfect && !isSellPerfect)
     {
       SendNotification(Symbol() + "SellPerfectOrderBreak.");
       Alert(Symbol() + "SellPerfectOrderBreak.");
@@ -109,8 +107,8 @@ int OnCalculate(const int rates_total, const int prev_calculated, const datetime
   }
 
   // 前回ループ値
-  b4BuyPerfect = buyPerfect;
-  b4SellPerfect = sellPerfect;
+  b4IsBuyPerfect = isBuyPerfect;
+  b4IsSellPerfect = isSellPerfect;
 
   double g;
   int m, s, k, h;
