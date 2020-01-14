@@ -14,7 +14,7 @@
 #property indicator_buffers 5
 #property indicator_color1 clrYellow
 #property indicator_color2 clrRed
-#property indicator_color3 clrGreen
+#property indicator_color3 clrWhite
 #property indicator_color4 clrBlue
 #property indicator_color5 clrPink
 #property indicator_width4 2
@@ -64,8 +64,8 @@ enum AppliedPriceList
 // MTF用
 // int MtfTimeFrameId;
 // extern TimeFrameList MtfTimeFrameId = Current_timeFrame; // MTFで表示させる時間軸
-extern int ma3_shift = -26;    //遅行スパン（表示移動）
-extern bool boolAlart = false; //アラート
+extern int ma3_shift = -26;   //遅行スパン（表示移動）
+extern bool boolAlart = true; //アラート
 //---------------------------
 
 //-------変数・定数定義-------
@@ -101,8 +101,8 @@ int OnInit()
    SetIndexStyle(3, DRAW_ARROW);
    SetIndexStyle(4, DRAW_ARROW);
 
-   SetIndexArrow(3, SYMBOL_ARROWUP);
-   SetIndexArrow(4, SYMBOL_ARROWDOWN);
+   SetIndexArrow(3, 233);
+   SetIndexArrow(4, 234);
 
    SetIndexShift(2, ma3_shift);
 
@@ -134,7 +134,7 @@ int OnCalculate(const int rates_total,
 
    if (limit > 0)
    {
-      limit = rates_total - MathMax(ma2_period, MathAbs(ma3_shift)) - 2;
+      limit = rates_total - MathMax(1, MathAbs(ma3_shift)) - 2;
       counts = 0;
    }
 
@@ -152,15 +152,15 @@ int OnCalculate(const int rates_total,
 
       MovingBuffer3[i] = iMA(NULL, 0, 1, 0, MODE_SMA, PRICE_CLOSE, i);
 
-      if (MovingBuffer3[i + 1] < MovingBuffer2[i - ma3_shift + 1] && MovingBuffer2[i - ma3_shift] <= MovingBuffer3[i])
+      if (MovingBuffer3[i + 1] < MovingBuffer1[i - ma3_shift + 1] && MovingBuffer1[i - ma3_shift] <= MovingBuffer3[i])
       {
 
-         upSign[i] = close[i];
+         upSign[i] = Low[i] - 100 * Point;
       }
-      if (MovingBuffer3[i + 1] > MovingBuffer2[i - ma3_shift + 1] && MovingBuffer2[i - ma3_shift] >= MovingBuffer3[i])
+      if (MovingBuffer3[i + 1] > MovingBuffer1[i - ma3_shift + 1] && MovingBuffer1[i - ma3_shift] >= MovingBuffer3[i])
       {
 
-         downSign[i] = close[i];
+         downSign[i] = High[i] + 100 * Point;
       }
    }
 
