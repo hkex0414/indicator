@@ -65,7 +65,7 @@ enum AppliedPriceList
 // int MtfTimeFrameId;
 // extern TimeFrameList MtfTimeFrameId = Current_timeFrame; // MTFで表示させる時間軸
 extern int ma3_shift = -26;   //遅行スパン（表示移動）
-extern bool boolAlart = true; //アラート
+extern bool boolAlart = true; //アラート・プッシュ通知
 //---------------------------
 
 //-------変数・定数定義-------
@@ -169,13 +169,15 @@ int OnCalculate(const int rates_total,
 
       if (upSign[1] != EMPTY_VALUE)
       {
-         Alert(Symbol() + " [UP] ");
+         Alert(Symbol() + "ICHIMOKU_ALERT UP");
+         SendNotification(Symbol() + "ICHIMOKU_ALERT UP");
          counts++;
       }
 
       if (downSign[1] != EMPTY_VALUE)
       {
-         Alert(Symbol() + " [DOWN]");
+         Alert(Symbol() + "ICHIMOKU_ALERT DOWN");
+         SendNotification(Symbol() + "ICHIMOKU_ALERT DOWN");
          counts++;
       }
    }
