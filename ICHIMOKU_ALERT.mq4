@@ -78,7 +78,7 @@ double tikouSpan[];
 int OnInit()
 {
    SetIndexBuffer(0, tikouSpan);
-   SetindexShift(0, -MaShift);
+   SetIndexShift(0, -MaShift);
 
    return (INIT_SUCCEEDED);
 }
@@ -87,7 +87,6 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
 {
-   return (0)
 }
 //+------------------------------------------------------------------+
 //| Custom indicator start function                                  |
