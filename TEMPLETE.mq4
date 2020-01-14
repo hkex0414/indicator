@@ -99,7 +99,7 @@ int OnCalculate(const int rates_total,
    // ループ上限
    int limit = Bars - IndicatorCounted();
    // 足が更新されたかの判定
-   bool isNewCandle = Time[0] != b4time && limit == 2;
+   bool isNewCandle = Time[0] != b4Time && limit == 2;
 
    for (int i = limit - 1; i >= 0; i--)
    {
