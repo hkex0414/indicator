@@ -78,6 +78,7 @@ double tikouSpan[];
 int OnInit()
 {
    SetIndexBuffer(0, tikouSpan);
+   SetindexShift(0, -MaShift);
 
    return (INIT_SUCCEEDED);
 }
@@ -110,7 +111,7 @@ int OnCalculate(const int rates_total,
    for (int i = limit - 1; i >= 0; i--)
    {
       //インジ計算処理
-      tikouSpan[i] = iMA(Symbol(), 0, 1, 0, MODE_SMA, PRICE_CLOSE, MaShift);
+      tikouSpan[i] = Close[i];
    }
    return (rates_total);
 }
