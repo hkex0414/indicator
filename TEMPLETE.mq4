@@ -55,7 +55,7 @@ enum AppliedPriceList
 // Pascal方式
 // MTF用
 int MtfTimeFrameId;
-extern TimeFrameList MtfTimeFrameId = Current_timeFrame; // MTFで表示させる時間軸
+extern TimeFrameList MtfTimeFrame = Current_timeFrame; // MTFで表示させる時間軸
 //---------------------------
 
 //-------変数・定数定義-------
