@@ -14,12 +14,12 @@
 // #property indicator_separate_window
 // 先行スパンA
 #property indicator_color1 clrAqua
-#property indicator_width1 3
+#property indicator_width1 1
 #property indicator_type1 DRAW_LINE
 
 // 先行スパンB
 #property indicator_color2 clrAqua
-#property indicator_width2 3
+#property indicator_width2 1
 #property indicator_type2 DRAW_LINE
 
 // 上昇塗りつぶし用
@@ -100,9 +100,14 @@ double senkouSpanA[], senkouSpanB[], upTrend[], downTrend[];
 int OnInit()
 {
    SetIndexBuffer(0, senkouSpanA);
+   SetIndexShift(0, KijunSenPeriod);
    SetIndexBuffer(1, senkouSpanB);
+   SetIndexShift(1, KijunSenPeriod);
    SetIndexBuffer(2, upTrend);
+   SetIndexShift(2, KijunSenPeriod);
    SetIndexBuffer(3, downTrend);
+   SetIndexShift(3, KijunSenPeriod);
+
    ObjectsDeleteAll();
 
    ObjectCreate(0, "5m", OBJ_RECTANGLE_LABEL, 0, 0, 0);
