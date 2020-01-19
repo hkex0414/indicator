@@ -3,7 +3,7 @@
 //|                                      Copyright 2019, 崩れかけた家 |
 //|                            https://discordapp.com/invite/N9PMEym |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2019, 崩れかけた家"
+#property copyright "Copyright 2020, 崩れかけた家"
 #property link "https://discordapp.com/invite/N9PMEym"
 #property version "1.00"
 #property strict
@@ -60,7 +60,8 @@ extern int Kijun = 26;                                 // 基準線期間
 extern int Senkou = 52;                                // 先行スパン期間
 extern bool IsCloud = false;                           // MTF雲表示切り替え
 extern bool IsRamp = true;                             // MTFランプ表示切り替え
-extern bool IsNotification = true;                     // 通知切り替え
+extern bool IsNotification = true;                     // Push通知切り替え
+extern bool IsMailNotification = false;                // メール通知切り替え
 extern bool Is5mNotification = true;                   // 5m通知切り替え
 extern bool Is15mNotification = true;                  // 15m通知切り替え
 extern bool Is30mNotification = true;                  // 30m通知切り替え
@@ -78,7 +79,7 @@ int period5Flag = 0;
 int period15Flag = 0;
 int period30Flag = 0;
 int period60Flag = 0;
-datetime b4Time;
+datetime b4Time = Time[0];
 string ObjArray[8] = {"5m_char", "15m_char", "30m_char", "60m_char", "5m_arrow", "15m_arrow", "30m_arrow", "60m_arrow"};
 
 //+------------------------------------------------------------------+
@@ -161,6 +162,10 @@ int OnInit()
          // ObjectSetInteger(0, obj_name_sign, OBJPROP_STYLE, STYLE_SOLID);
          // ObjectSetInteger(0, obj_name_sign, OBJPROP_WIDTH, 5);
       }
+      calcSenkouSpanForOninit(5, true);
+      calcSenkouSpanForOninit(15, true);
+      calcSenkouSpanForOninit(30, true);
+      calcSenkouSpanForOninit(60, true);
    }
 
    return (INIT_SUCCEEDED);
@@ -245,9 +250,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
-            if ((period5Flag == 0 || period5Flag != 1) && Is5mNotification)
+            if (period5Flag != 1 && Is5mNotification)
             {
                doAlert(5, 1);
+               doAlertMail(5, 1);
                period5Flag = 1;
             }
          }
@@ -261,9 +267,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
-            if ((period5Flag == 0 || period5Flag != 2) && Is5mNotification)
+            if (period5Flag != 2 && Is5mNotification)
             {
                doAlert(5, 2);
+               doAlertMail(5, 2);
                period5Flag = 2;
             }
          }
@@ -277,9 +284,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
-            if ((period5Flag == 0 || period5Flag != 3) && Is5mNotification)
+            if (period5Flag != 3 && Is5mNotification)
             {
                doAlert(5, 3);
+               doAlertMail(5, 3);
                period5Flag = 3;
             }
          }
@@ -296,9 +304,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
-            if ((period15Flag == 0 || period15Flag != 1) && Is15mNotification)
+            if (period15Flag != 1 && Is15mNotification)
             {
                doAlert(15, 1);
+               doAlertMail(15, 1);
                period15Flag = 1;
             }
          }
@@ -313,9 +322,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
 
          if (isNewCandle && IsNotification)
          {
-            if ((period15Flag == 0 || period15Flag != 2) && Is15mNotification)
+            if (period15Flag != 2 && Is15mNotification)
             {
                doAlert(15, 2);
+               doAlertMail(15, 2);
                period15Flag = 2;
             }
          }
@@ -329,9 +339,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
-            if ((period15Flag == 0 || period15Flag != 3) && Is15mNotification)
+            if (period15Flag != 3 && Is15mNotification)
             {
                doAlert(15, 3);
+               doAlertMail(15, 3);
                period15Flag = 3;
             }
          }
@@ -348,9 +359,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
-            if ((period30Flag == 0 || period30Flag != 1) && Is30mNotification)
+            if (period30Flag != 1 && Is30mNotification)
             {
                doAlert(30, 1);
+               doAlertMail(30, 1);
                period30Flag = 1;
             }
          }
@@ -364,9 +376,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
-            if ((period30Flag == 0 || period30Flag != 2) && Is30mNotification)
+            if (period30Flag != 2 && Is30mNotification)
             {
                doAlert(30, 2);
+               doAlertMail(30, 2);
                period30Flag = 2;
             }
          }
@@ -380,9 +393,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
-            if ((period30Flag == 0 || period30Flag != 3) && Is30mNotification)
+            if (period30Flag != 3 && Is30mNotification)
             {
                doAlert(30, 3);
+               doAlertMail(30, 3);
                period30Flag = 3;
             }
          }
@@ -399,9 +413,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
-            if ((period60Flag == 0 || period60Flag != 1) && Is60mNotification)
+            if (period60Flag != 1 && Is60mNotification)
             {
                doAlert(60, 1);
+               doAlertMail(60, 1);
                period60Flag = 1;
             }
          }
@@ -415,9 +430,10 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
-            if ((period60Flag == 0 || period60Flag != 2) && Is60mNotification)
+            if (period60Flag != 2 && Is60mNotification)
             {
                doAlert(60, 2);
+               doAlertMail(60, 2);
                period60Flag = 2;
             }
          }
@@ -431,9 +447,217 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
-            if ((period60Flag == 0 || period60Flag != 3) && Is60mNotification)
+            if (period60Flag != 3 && Is60mNotification)
             {
                doAlert(60, 3);
+               doAlertMail(60, 3);
+               period60Flag = 3;
+            }
+         }
+      }
+   }
+}
+
+//+----------------------------------------------------------------------------+
+void calcSenkouSpanForOninit(int period, bool isNewCandle)
+{
+   int shift = iBarShift(NULL, period, Time[0], false);
+   double Tenkan_Buffer = (iHigh(NULL, period, iHighest(NULL, period, MODE_HIGH, Tenkan, 0)) + iLow(NULL, period, iLowest(NULL, period, MODE_LOW, Tenkan, 0))) / 2;
+   //---- Kijun Sen
+   double Kijun_Buffer = (iHigh(NULL, period, iHighest(NULL, period, MODE_HIGH, Kijun, 0)) + iLow(NULL, period, iLowest(NULL, period, MODE_LOW, Kijun, 0))) / 2;
+   //---- Senkou Span A
+   double SpanA_Buffer = (Tenkan_Buffer + Kijun_Buffer) / 2;
+   //---- Senkou Span B
+   double SpanB_Buffer = (iHigh(NULL, period, iHighest(NULL, period, MODE_HIGH, Senkou, 0)) + iLow(NULL, period, iLowest(NULL, period, MODE_LOW, Senkou, 0))) / 2;
+   string obj_name_arrow = (string)period + "m_arrow";
+   if (period == 5)
+   {
+      if (SpanA_Buffer > SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
+         if (isNewCandle && IsNotification)
+         {
+            if (period5Flag != 1 && Is5mNotification)
+            {
+               period5Flag = 1;
+            }
+         }
+      }
+      else if (SpanA_Buffer < SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
+         if (isNewCandle && IsNotification)
+         {
+            if (period5Flag != 2 && Is5mNotification)
+            {
+               period5Flag = 2;
+            }
+         }
+      }
+      else
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
+         if (isNewCandle && IsNotification)
+         {
+            if (period5Flag != 3 && Is5mNotification)
+            {
+               period5Flag = 3;
+            }
+         }
+      }
+   }
+   else if (period == 15)
+   {
+      if (SpanA_Buffer > SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
+         if (isNewCandle && IsNotification)
+         {
+            if (period15Flag != 1 && Is15mNotification)
+            {
+               period15Flag = 1;
+            }
+         }
+      }
+      else if (SpanA_Buffer < SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
+
+         if (isNewCandle && IsNotification)
+         {
+            if (period15Flag != 2 && Is15mNotification)
+            {
+               period15Flag = 2;
+            }
+         }
+      }
+      else
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
+         if (isNewCandle && IsNotification)
+         {
+            if (period15Flag != 3 && Is15mNotification)
+            {
+               period15Flag = 3;
+            }
+         }
+      }
+   }
+   else if (period == 30)
+   {
+      if (SpanA_Buffer > SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
+         if (isNewCandle && IsNotification)
+         {
+            if (period30Flag != 1 && Is30mNotification)
+            {
+               period30Flag = 1;
+            }
+         }
+      }
+      else if (SpanA_Buffer < SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
+         if (isNewCandle && IsNotification)
+         {
+            if (period30Flag != 2 && Is30mNotification)
+            {
+               period30Flag = 2;
+            }
+         }
+      }
+      else
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
+         if (isNewCandle && IsNotification)
+         {
+            if (period30Flag != 3 && Is30mNotification)
+            {
+               period30Flag = 3;
+            }
+         }
+      }
+   }
+   else if (period == 60)
+   {
+      if (SpanA_Buffer > SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
+         if (isNewCandle && IsNotification)
+         {
+            if (period60Flag != 1 && Is60mNotification)
+            {
+               period60Flag = 1;
+            }
+         }
+      }
+      else if (SpanA_Buffer < SpanB_Buffer)
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
+         if (isNewCandle && IsNotification)
+         {
+            if (period60Flag != 2 && Is60mNotification)
+            {
+               period60Flag = 2;
+            }
+         }
+      }
+      else
+      {
+         ObjectDelete(0, obj_name_arrow);
+         ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
+         if (isNewCandle && IsNotification)
+         {
+            if (period60Flag != 3 && Is60mNotification)
+            {
                period60Flag = 3;
             }
          }
@@ -450,9 +674,25 @@ void doAlert(int period, int mode)
       status = "DC";
    if (mode == 3)
       status = "Nutral";
-   string msg = Symbol() + " " + period + "m " + status;
+   string msg = TimeCurrent() + " " + Symbol() + " " + period + "m " + status;
    Alert(msg);
    SendNotification(msg);
+}
+
+void doAlertMail(int period, int mode)
+{
+   if (IsMailNotification)
+   {
+      string status;
+      if (mode == 1)
+         status = "GC";
+      else if (mode == 2)
+         status = "DC";
+      if (mode == 3)
+         status = "Nutral";
+      string msg = TimeCurrent() + " " + Symbol() + " " + period + "m " + status;
+      SendMail(msg, msg);
+   }
 }
 
 void deleteAllObj()
