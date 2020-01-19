@@ -1,15 +1,6 @@
-//+------------------------------------------------------------------+
-//|                                      MTF_SENKOUSPAN_HISTGRAM.mq4 |
-//|                                      Copyright 2019, 崩れかけた家 |
-//|                            https://discordapp.com/invite/N9PMEym |
-//+------------------------------------------------------------------+
-#property copyright "Copyright 2019, 崩れかけた家"
-#property link "https://discordapp.com/invite/N9PMEym"
-#property version "1.00"
-#property strict
+#property copyright "www,forex-tsd.com"
+#property link "www,forex-tsd.com"
 
-//-----インジゲーター設定------
-// 表示場所
 #property indicator_separate_window
 #property indicator_buffers 3
 #property indicator_color1 LimeGreen
@@ -20,73 +11,32 @@
 #property indicator_width3 3
 #property indicator_minimum 0
 #property indicator_maximum 1
-//---------------------------
 
-//--------ENUM定義-----------
-// Pascal方式
-// MA算出方式
-enum TaMethodList
-{
-   SMA = 0,  // 単純移動平均線
-   EMA = 1,  // 指数移動平均線
-   SMMA = 2, // 平滑移動平均線
-   LWMA = 3  // 線形加重移動平均戦
-};
-// チャート時間軸
-enum TimeFrameList
-{
-   Current_timeFrame = 0, // 現在の時間足
-   M1 = 1,                // 1分足
-   M5 = 5,                // 5分足
-   M15 = 15,              // 15分足
-   M30 = 30,              // 30分足
-   H1 = 60,               // 1時間足
-   H4 = 240,              // 4時間足
-   D1 = 1440,             // 日足
-   W1 = 10080,            //週足
-   MN = 43200,            // 月足
-   returnBars = 100,      // 再帰処理用（選択禁止）
-   calculateValue = 200   // 再帰処理用（選択禁止）
-};
-// 価格データ
-enum AppliedPriceList
-{
-   CLOSE = 0,   // 終値
-   OPEN = 1,    // 始値
-   HIGH = 2,    // 高値
-   LOW = 3,     // 安値
-   MEDIAN = 4,  // 中央値
-   TYPICAL = 5, // 代表値
-   WEIGHTED = 6 // 加重終値
-};
-//---------------------------
+//
+//
+//
+//
+//
 
-//------パラメーター定義------
-// Pascal方式
-// MTF用
-int MtfTimeFrameId;
-extern TimeFrameList TimeFrame = Current_timeFrame; // MTFで表示させる時間軸
-extern int Tenkan = 9;                              // 転換線期間
-extern int Kijun = 26;                              // 基準線期間
-extern int Senkou = 52;                             // 先行スパン期間
+extern string TimeFrame = "Current time frame";
+extern int Tenkan = 9;
+extern int Kijun = 26;
+extern int Senkou = 52;
+extern bool ShowNeutral = false;
 
 extern bool alertsOn = true;
+extern bool alertsOnCurrent = false;
+extern bool alertsMessage = true;
+extern bool alertsSound = false;
+extern bool alertsEmail = false;
+extern string soundfile = "alert2.wav";
 
-//---------------------------
+//
+//
+//
+//
+//
 
-//-------変数・定数定義-------
-// Camel方式
-// アラート重複排除用
-datetime b4Time;
-string indicatorFileName;
-int timeFrame;
-bool returnBars;
-bool calculateValue;
-int whichBar;
-//---------------------------
-
-//----------配列定義---------
-// Camel方式
 double UpH[];
 double DnH[];
 double NuH[];
@@ -95,14 +45,29 @@ double Kijun_Buffer[];
 double SpanA_Buffer[];
 double SpanB_Buffer[];
 double trend[];
-//---------------------------
+
+//
+//
+//
+//
+//
+
+string indicatorFileName;
+int timeFrame;
+bool returnBars;
+bool calculateValue;
 
 //+------------------------------------------------------------------+
-//| Custom indicator initialization function                         |
+//|                                                                  |
 //+------------------------------------------------------------------+
-int OnInit()
+//
+//
+//
+//
+//
+
+int init()
 {
-   MtfTimeFrameId = TimeFrame;
    IndicatorBuffers(8);
    SetIndexBuffer(0, UpH);
    SetIndexStyle(0, DRAW_HISTOGRAM);
@@ -116,158 +81,50 @@ int OnInit()
    SetIndexBuffer(6, SpanB_Buffer);
    SetIndexBuffer(7, trend);
 
+   //
+   //
+   //
+   //
+   //
+
    indicatorFileName = WindowExpertName();
-   calculateValue = (MtfTimeFrameId == 100);
+   calculateValue = (TimeFrame == "calculateValue");
    if (calculateValue)
       return (0);
-   returnBars = (MtfTimeFrameId == 200);
+   returnBars = (TimeFrame == "returnBars");
    if (returnBars)
       return (0);
-   MtfTimeFrameId = stringToTimeFrame(MtfTimeFrameId);
-   SetIndexShift(0, Kijun * MtfTimeFrameId / Period());
-   SetIndexShift(1, Kijun * MtfTimeFrameId / Period());
-   SetIndexShift(2, Kijun * MtfTimeFrameId / Period());
-   SetIndexShift(5, Kijun * MtfTimeFrameId / Period());
-   SetIndexShift(6, Kijun * MtfTimeFrameId / Period());
-   IndicatorShortName(timeFrameToString(MtfTimeFrameId) + "  SpanA-SpanB Cross Histo");
+   timeFrame = stringToTimeFrame(TimeFrame);
+   SetIndexShift(0, Kijun * timeFrame / Period());
+   SetIndexShift(1, Kijun * timeFrame / Period());
+   SetIndexShift(2, Kijun * timeFrame / Period());
+   SetIndexShift(5, Kijun * timeFrame / Period());
+   SetIndexShift(6, Kijun * timeFrame / Period());
 
-   ObjectCreate(0, "5m", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "5m", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "5m", OBJPROP_XDISTANCE, 30);
-   ObjectSetInteger(0, "5m", OBJPROP_YDISTANCE, 30);
-   ObjectSetInteger(0, "5m", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "5m", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "5m", OBJPROP_BGCOLOR, clrBlue);
-   ObjectSetInteger(0, "5m", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "5m", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "5m", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "5m", OBJPROP_WIDTH, 5);
+   //
+   //
+   //
+   //
+   //
 
-   ObjectCreate(0, "5m_char", OBJ_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "5m_char", OBJPROP_XDISTANCE, 60);
-   ObjectSetInteger(0, "5m_char", OBJPROP_YDISTANCE, 45);
-   ObjectSetText("5m_char", "5m", 18, "ＭＳ　ゴシック", White);
-
-   ObjectCreate(0, "15m", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "15m", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "15m", OBJPROP_XDISTANCE, 30);
-   ObjectSetInteger(0, "15m", OBJPROP_YDISTANCE, 80);
-   ObjectSetInteger(0, "15m", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "15m", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "15m", OBJPROP_BGCOLOR, clrBlue);
-   ObjectSetInteger(0, "15m", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "15m", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "15m", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "15m", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "15m_char", OBJ_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "15m_char", OBJPROP_XDISTANCE, 60);
-   ObjectSetInteger(0, "15m_char", OBJPROP_YDISTANCE, 95);
-   ObjectSetText("15m_char", "15m", 18, "ＭＳ　ゴシック", White);
-
-   ObjectCreate(0, "30m", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "30m", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "30m", OBJPROP_XDISTANCE, 30);
-   ObjectSetInteger(0, "30m", OBJPROP_YDISTANCE, 130);
-   ObjectSetInteger(0, "30m", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "30m", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "30m", OBJPROP_BGCOLOR, clrBlue);
-   ObjectSetInteger(0, "30m", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "30m", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "30m", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "30m", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "30m_char", OBJ_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "30m_char", OBJPROP_XDISTANCE, 60);
-   ObjectSetInteger(0, "30m_char", OBJPROP_YDISTANCE, 145);
-   ObjectSetText("30m_char", "30m", 18, "ＭＳ　ゴシック", White);
-
-   ObjectCreate(0, "60m", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "60m", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "60m", OBJPROP_XDISTANCE, 30);
-   ObjectSetInteger(0, "60m", OBJPROP_YDISTANCE, 180);
-   ObjectSetInteger(0, "60m", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "60m", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "60m", OBJPROP_BGCOLOR, clrBlue);
-   ObjectSetInteger(0, "60m", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "60m", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "60m", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "60m", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "60m_char", OBJ_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "60m_char", OBJPROP_XDISTANCE, 60);
-   ObjectSetInteger(0, "60m_char", OBJPROP_YDISTANCE, 195);
-   ObjectSetText("60m_char", "60m", 18, "ＭＳ　ゴシック", White);
-
-   ObjectCreate(0, "5m_sign", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_XDISTANCE, 130);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_YDISTANCE, 30);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_BGCOLOR, clrBlack);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "5m_sign", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "15m_sign", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_XDISTANCE, 130);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_YDISTANCE, 80);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_BGCOLOR, clrBlack);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "15m_sign", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "30m_sign", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_XDISTANCE, 130);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_YDISTANCE, 130);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_BGCOLOR, clrBlack);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "30m_sign", OBJPROP_WIDTH, 5);
-
-   ObjectCreate(0, "60m_sign", OBJ_RECTANGLE_LABEL, 0, 0, 0);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_CORNER, CORNER_LEFT_UPPER);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_XDISTANCE, 130);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_YDISTANCE, 180);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_XSIZE, 100);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_YSIZE, 50);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_BGCOLOR, clrBlack);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_BORDER_TYPE, BORDER_FLAT);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_COLOR, clrWhite);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_STYLE, STYLE_SOLID);
-   ObjectSetInteger(0, "60m_sign", OBJPROP_WIDTH, 5);
-
-   return (INIT_SUCCEEDED);
+   IndicatorShortName(timeFrameToString(timeFrame) + "  SpanA-SpanB Cross Histo");
+   return (0);
 }
+
+int deinit() { return (0); }
+
+//
+//
+//
+//
+//
 //+------------------------------------------------------------------+
-//| Custom indicator deinitialization function                       |
+//|                                                                  |
 //+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-{
-}
-//+------------------------------------------------------------------+
-//| Custom indicator start function                                  |
-//+------------------------------------------------------------------+
-int OnCalculate(const int rates_total,
-                const int prev_calculated,
-                const datetime &time[],
-                const double &open[],
-                const double &high[],
-                const double &low[],
-                const double &close[],
-                const long &tick_volume[],
-                const long &volume[],
-                const int &spread[])
+//
+//
+
+int start()
 {
    int counted_bars = IndicatorCounted();
    int i, k, limit;
@@ -289,7 +146,7 @@ int OnCalculate(const int rates_total,
    //
    //
 
-   if (calculateValue || MtfTimeFrameId == Period())
+   if (calculateValue || timeFrame == Period())
    {
       for (i = limit; i >= 0; i--)
       {
@@ -377,11 +234,13 @@ int OnCalculate(const int rates_total,
          DnH[i] = EMPTY_VALUE;
          NuH[i] = EMPTY_VALUE;
 
-         trend[i] = trend[i + 1];
+         if (ShowNeutral)
+            trend[i] = 0;
+         else
+            trend[i] = trend[i + 1];
 
          if (SpanA_Buffer[i] > SpanB_Buffer[i])
             trend[i] = 1;
-
          if (SpanA_Buffer[i] < SpanB_Buffer[i])
             trend[i] = -1;
          if (SpanA_Buffer[i] == SpanB_Buffer[i])
@@ -394,8 +253,6 @@ int OnCalculate(const int rates_total,
             NuH[i] = 1;
       }
       manageAlerts();
-      createArrowObject();
-
       return (0);
    }
 
@@ -405,11 +262,11 @@ int OnCalculate(const int rates_total,
    //
    //
 
-   limit = MathMax(limit, MathMin(Bars - 1, iCustom(NULL, MtfTimeFrameId, indicatorFileName, "returnBars", 0, 0) * MtfTimeFrameId / Period()));
+   limit = MathMax(limit, MathMin(Bars - 1, iCustom(NULL, timeFrame, indicatorFileName, "returnBars", 0, 0) * timeFrame / Period()));
    for (i = limit; i >= 0; i--)
    {
-      int y = iBarShift(NULL, MtfTimeFrameId, Time[i]);
-      trend[i] = iCustom(NULL, MtfTimeFrameId, indicatorFileName, "calculateValue", Tenkan, Kijun, Senkou, 7, y);
+      int y = iBarShift(NULL, timeFrame, Time[i]);
+      trend[i] = iCustom(NULL, timeFrame, indicatorFileName, "calculateValue", Tenkan, Kijun, Senkou, ShowNeutral, 7, y);
       UpH[i] = EMPTY_VALUE;
       DnH[i] = EMPTY_VALUE;
       NuH[i] = EMPTY_VALUE;
@@ -422,68 +279,7 @@ int OnCalculate(const int rates_total,
          NuH[i] = 1;
    }
    manageAlerts();
-
-   // double senkouSpanA15m = iIchimoku(NULL, 15, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANA, 0);
-   // double senkouSpanB15m = iIchimoku(NULL, 15, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANB, 0);
-
-   // if (senkouSpanA15m > senkouSpanB15m)
-   // {
-   //    ObjectDelete(0, "15m_arrow");
-   //    ObjectCreate(0, "15m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "15m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "15m_arrow", OBJPROP_YDISTANCE, 85);
-   //    ObjectSetText("15m_arrow", CharToStr(221), 30, "Wingdings", DeepSkyBlue);
-   // }
-   // if (senkouSpanA15m < senkouSpanB15m)
-   // {
-   //    ObjectDelete(0, "15m_arrow");
-   //    ObjectCreate(0, "15m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "15m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "15m_arrow", OBJPROP_YDISTANCE, 85);
-   //    ObjectSetText("15m_arrow", CharToStr(222), 30, "Wingdings", Red);
-   // }
-
-   // double senkouSpanA30m = iIchimoku(NULL, 30, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANA, 0);
-   // double senkouSpanB30m = iIchimoku(NULL, 30, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANB, 0);
-
-   // if (senkouSpanA30m > senkouSpanB30m)
-   // {
-   //    ObjectDelete(0, "30m_arrow");
-   //    ObjectCreate(0, "30m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "30m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "30m_arrow", OBJPROP_YDISTANCE, 135);
-   //    ObjectSetText("30m_arrow", CharToStr(221), 30, "Wingdings", DeepSkyBlue);
-   // }
-   // if (senkouSpanA30m < senkouSpanB30m)
-   // {
-   //    ObjectDelete(0, "30m_arrow");
-   //    ObjectCreate(0, "30m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "30m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "30m_arrow", OBJPROP_YDISTANCE, 135);
-   //    ObjectSetText("30m_arrow", CharToStr(222), 30, "Wingdings", Red);
-   // }
-
-   // double senkouSpanA60m = iIchimoku(NULL, 60, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANA, 0);
-   // double senkouSpanB60m = iIchimoku(NULL, 60, TenkanSenPeriod, KijunSenPeriod, SenkouSupanPeriod, MODE_SENKOUSPANB, 0);
-
-   // if (senkouSpanA60m > senkouSpanB60m)
-   // {
-   //    ObjectDelete(0, "60m_arrow");
-   //    ObjectCreate(0, "60m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "60m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "60m_arrow", OBJPROP_YDISTANCE, 185);
-   //    ObjectSetText("60m_arrow", CharToStr(221), 30, "Wingdings", DeepSkyBlue);
-   // }
-   // if (senkouSpanA60m < senkouSpanB60m)
-   // {
-   //    ObjectDelete(0, "60m_arrow");
-   //    ObjectCreate(0, "60m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-   //    ObjectSetInteger(0, "60m_arrow", OBJPROP_XDISTANCE, 165);
-   //    ObjectSetInteger(0, "60m_arrow", OBJPROP_YDISTANCE, 185);
-   //    ObjectSetText("60m_arrow", CharToStr(222), 30, "Wingdings", Red);
-   // }
-
-   return (rates_total);
+   return (0);
 }
 
 //+-------------------------------------------------------------------
@@ -561,14 +357,17 @@ void manageAlerts()
 {
    if (!calculateValue && alertsOn)
    {
-      whichBar = 1;
+      if (alertsOnCurrent)
+         int whichBar = 0;
+      else
+         whichBar = 1;
       whichBar = iBarShift(NULL, 0, iTime(NULL, timeFrame, whichBar));
       if (trend[whichBar] != trend[whichBar + 1])
       {
          if (trend[whichBar] == 1)
-            doAlert(whichBar, "GC");
+            doAlert(whichBar, "up");
          if (trend[whichBar] == -1)
-            doAlert(whichBar, "DC");
+            doAlert(whichBar, "down");
          if (trend[whichBar] == 0)
             doAlert(whichBar, "neutral");
       }
@@ -598,37 +397,12 @@ void doAlert(int forBar, string doWhat)
       //
       //
 
-      message = StringConcatenate(Symbol(), " ", timeFrameToString(MtfTimeFrameId) + ":SpanAB ", doWhat);
-      Alert(message);
-      SendNotification(message);
-   }
-}
-
-void createArrowObject()
-{
-   int trendTmp = iCustom(NULL, MtfTimeFrameId, indicatorFileName, "calculateValue", Tenkan, Kijun, Senkou, 7, 0);
-   if (trendTmp == 1)
-   {
-      ObjectDelete(0, "5m_arrow");
-      ObjectCreate(0, "5m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_XDISTANCE, 165);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_YDISTANCE, 35);
-      ObjectSetText("5m_arrow", CharToStr(221), 30, "Wingdings", DeepSkyBlue);
-   }
-   if (trendTmp == -1)
-   {
-      ObjectDelete(0, "5m_arrow");
-      ObjectCreate(0, "5m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_XDISTANCE, 165);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_YDISTANCE, 35);
-      ObjectSetText("5m_arrow", CharToStr(222), 30, "Wingdings", Red);
-   }
-   if (trendTmp == 0)
-   {
-      ObjectDelete(0, "5m_arrow");
-      ObjectCreate(0, "5m_arrow", OBJ_LABEL, 0, 0, 0, 0, 0);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_XDISTANCE, 165);
-      ObjectSetInteger(0, "5m_arrow", OBJPROP_YDISTANCE, 35);
-      ObjectSetText("5m_arrow", CharToStr(220), 30, "Wingdings", Gray);
+      message = StringConcatenate(Symbol(), " at ", TimeToStr(TimeLocal(), TIME_SECONDS), " - ", timeFrameToString(timeFrame) + " SpanA - SpanB cross ", doWhat);
+      if (alertsMessage)
+         Alert(message);
+      if (alertsEmail)
+         SendMail(StringConcatenate(Symbol(), " SpanA - SpanB cross "), message);
+      if (alertsSound)
+         PlaySound("alert2.wav");
    }
 }
