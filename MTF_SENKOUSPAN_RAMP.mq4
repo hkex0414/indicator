@@ -79,6 +79,7 @@ int period15Flag = 0;
 int period30Flag = 0;
 int period60Flag = 0;
 datetime b4Time;
+string ObjArray[8] = {"5m_char", "15m_char", "30m_char", "60m_char", "5m_arrow", "15m_arrow", "30m_arrow", "60m_arrow"};
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -105,7 +106,7 @@ int OnInit()
    SetIndexBuffer(1, SpanB2_Buffer);
    SetIndexShift(1, Kijun * k);
 
-   ObjectsDeleteAll();
+   deleteAllObj();
    if (IsRamp)
    {
       string obj_name;
@@ -127,38 +128,38 @@ int OnInit()
          {
             obj_name = "60m";
          }
-         string obj_name_char = (string)i + "_char";
-         string obj_name_sign = (string)i + "_sign";
-         int x_distance = 45 + i * 150;
-         int y_distance = 45 + i * 100;
-         ObjectCreate(0, obj_name, OBJ_RECTANGLE_LABEL, 0, 0, 0);
-         ObjectSetInteger(0, obj_name, OBJPROP_CORNER, CORNER_LEFT_UPPER);
-         ObjectSetInteger(0, obj_name, OBJPROP_XDISTANCE, 30);
-         ObjectSetInteger(0, obj_name, OBJPROP_YDISTANCE, y_distance);
-         ObjectSetInteger(0, obj_name, OBJPROP_XSIZE, 150);
-         ObjectSetInteger(0, obj_name, OBJPROP_YSIZE, 100);
-         ObjectSetInteger(0, obj_name, OBJPROP_BGCOLOR, clrBlue);
-         ObjectSetInteger(0, obj_name, OBJPROP_BORDER_TYPE, BORDER_FLAT);
-         ObjectSetInteger(0, obj_name, OBJPROP_COLOR, clrWhite);
-         ObjectSetInteger(0, obj_name, OBJPROP_STYLE, STYLE_SOLID);
-         ObjectSetInteger(0, obj_name, OBJPROP_WIDTH, 5);
+         string obj_name_char = obj_name + "_char";
+         // string obj_name_sign = (string)i + "_sign";
+         int x_distance = 45 + i * 100;
+         int y_distance = 45 + i * 50;
+         // ObjectCreate(0, obj_name, OBJ_RECTANGLE_LABEL, 0, 0, 0);
+         // ObjectSetInteger(0, obj_name, OBJPROP_CORNER, CORNER_LEFT_UPPER);
+         // ObjectSetInteger(0, obj_name, OBJPROP_XDISTANCE, 30);
+         // ObjectSetInteger(0, obj_name, OBJPROP_YDISTANCE, y_distance);
+         // ObjectSetInteger(0, obj_name, OBJPROP_XSIZE, 100);
+         // ObjectSetInteger(0, obj_name, OBJPROP_YSIZE, 50);
+         // ObjectSetInteger(0, obj_name, OBJPROP_BGCOLOR, clrBlue);
+         // ObjectSetInteger(0, obj_name, OBJPROP_BORDER_TYPE, BORDER_FLAT);
+         // ObjectSetInteger(0, obj_name, OBJPROP_COLOR, clrWhite);
+         // ObjectSetInteger(0, obj_name, OBJPROP_STYLE, STYLE_SOLID);
+         // ObjectSetInteger(0, obj_name, OBJPROP_WIDTH, 5);
 
          ObjectCreate(0, obj_name_char, OBJ_LABEL, 0, 0, 0);
          ObjectSetInteger(0, obj_name_char, OBJPROP_XDISTANCE, 60);
-         ObjectSetInteger(0, obj_name_char, OBJPROP_YDISTANCE, y_distance + 25);
-         ObjectSetText(obj_name_char, obj_name, 18, "ＭＳ　ゴシック", White);
+         ObjectSetInteger(0, obj_name_char, OBJPROP_YDISTANCE, y_distance);
+         ObjectSetText(obj_name_char, obj_name, 15, "ＭＳ　ゴシック", White);
 
-         ObjectCreate(0, obj_name_sign, OBJ_RECTANGLE_LABEL, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_CORNER, CORNER_LEFT_UPPER);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_XDISTANCE, 180);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_YDISTANCE, y_distance);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_XSIZE, 150);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_YSIZE, 100);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_BGCOLOR, clrBlack);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_BORDER_TYPE, BORDER_FLAT);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_COLOR, clrWhite);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_STYLE, STYLE_SOLID);
-         ObjectSetInteger(0, obj_name_sign, OBJPROP_WIDTH, 5);
+         // ObjectCreate(0, obj_name_sign, OBJ_RECTANGLE_LABEL, 0, 0, 0);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_CORNER, CORNER_LEFT_UPPER);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_XDISTANCE, 180);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_YDISTANCE, y_distance);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_XSIZE, 100);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_YSIZE, 50);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_BGCOLOR, clrBlack);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_BORDER_TYPE, BORDER_FLAT);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_COLOR, clrWhite);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_STYLE, STYLE_SOLID);
+         // ObjectSetInteger(0, obj_name_sign, OBJPROP_WIDTH, 5);
       }
    }
 
@@ -169,7 +170,7 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
 {
-   ObjectsDeleteAll();
+   deleteAllObj();
 }
 //+------------------------------------------------------------------+
 //| Ichimoku Kinko Hyo                                               |
@@ -239,9 +240,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 60);
-         ObjectSetText(obj_name_arrow, CharToStr(221), 30, "Wingdings", DeepSkyBlue);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
             if ((period5Flag == 0 || period5Flag != 1) && Is5mNotification)
@@ -255,9 +256,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 60);
-         ObjectSetText(obj_name_arrow, CharToStr(222), 30, "Wingdings", Red);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
             if ((period5Flag == 0 || period5Flag != 2) && Is5mNotification)
@@ -271,9 +272,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 60);
-         ObjectSetText(obj_name_arrow, CharToStr(220), 30, "Wingdings", Gray);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
             if ((period5Flag == 0 || period5Flag != 3) && Is5mNotification)
@@ -290,9 +291,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 160);
-         ObjectSetText(obj_name_arrow, CharToStr(221), 30, "Wingdings", DeepSkyBlue);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
             if ((period15Flag == 0 || period15Flag != 1) && Is15mNotification)
@@ -306,9 +307,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 160);
-         ObjectSetText(obj_name_arrow, CharToStr(222), 30, "Wingdings", Red);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
 
          if (isNewCandle && IsNotification)
          {
@@ -323,9 +324,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 160);
-         ObjectSetText(obj_name_arrow, CharToStr(220), 30, "Wingdings", Gray);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
             if ((period15Flag == 0 || period15Flag != 3) && Is15mNotification)
@@ -342,9 +343,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 260);
-         ObjectSetText(obj_name_arrow, CharToStr(221), 30, "Wingdings", DeepSkyBlue);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
             if ((period30Flag == 0 || period30Flag != 1) && Is30mNotification)
@@ -358,9 +359,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 260);
-         ObjectSetText(obj_name_arrow, CharToStr(222), 30, "Wingdings", Red);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
             if ((period30Flag == 0 || period30Flag != 2) && Is30mNotification)
@@ -374,9 +375,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 260);
-         ObjectSetText(obj_name_arrow, CharToStr(220), 30, "Wingdings", Gray);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
             if ((period30Flag == 0 || period30Flag != 3) && Is30mNotification)
@@ -393,9 +394,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 360);
-         ObjectSetText(obj_name_arrow, CharToStr(221), 30, "Wingdings", DeepSkyBlue);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
          if (isNewCandle && IsNotification)
          {
             if ((period60Flag == 0 || period60Flag != 1) && Is60mNotification)
@@ -409,9 +410,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 360);
-         ObjectSetText(obj_name_arrow, CharToStr(222), 30, "Wingdings", Red);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
          if (isNewCandle && IsNotification)
          {
             if ((period60Flag == 0 || period60Flag != 2) && Is60mNotification)
@@ -425,9 +426,9 @@ void calcSenkouSpan(int period, bool isNewCandle)
       {
          ObjectDelete(0, obj_name_arrow);
          ObjectCreate(0, obj_name_arrow, OBJ_LABEL, 0, 0, 0, 0, 0);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 220);
-         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 360);
-         ObjectSetText(obj_name_arrow, CharToStr(220), 30, "Wingdings", Gray);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
+         ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
+         ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
          if (isNewCandle && IsNotification)
          {
             if ((period60Flag == 0 || period60Flag != 3) && Is60mNotification)
@@ -452,4 +453,12 @@ void doAlert(int period, int mode)
    string msg = Symbol() + " " + period + "m " + status;
    Alert(msg);
    SendNotification(msg);
+}
+
+void deleteAllObj()
+{
+   for (int i = 0; i < ArraySize(ObjArray); i++)
+   {
+      ObjectDelete(0, ObjArray[i]);
+   }
 }
