@@ -248,7 +248,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 1 && Is5mNotification)
             {
@@ -265,7 +265,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 2 && Is5mNotification)
             {
@@ -282,7 +282,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 3 && Is5mNotification)
             {
@@ -302,7 +302,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 1 && Is15mNotification)
             {
@@ -320,7 +320,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
 
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 2 && Is15mNotification)
             {
@@ -337,7 +337,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 3 && Is15mNotification)
             {
@@ -357,7 +357,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 1 && Is30mNotification)
             {
@@ -374,7 +374,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 2 && Is30mNotification)
             {
@@ -391,7 +391,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 3 && Is30mNotification)
             {
@@ -411,7 +411,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 1 && Is60mNotification)
             {
@@ -428,7 +428,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 2 && Is60mNotification)
             {
@@ -445,7 +445,7 @@ void calcSenkouSpan(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 3 && Is60mNotification)
             {
@@ -479,7 +479,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 1 && Is5mNotification)
             {
@@ -494,7 +494,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 2 && Is5mNotification)
             {
@@ -509,7 +509,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 45);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period5Flag != 3 && Is5mNotification)
             {
@@ -527,7 +527,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 1 && Is15mNotification)
             {
@@ -543,7 +543,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
 
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 2 && Is15mNotification)
             {
@@ -558,7 +558,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 95);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period15Flag != 3 && Is15mNotification)
             {
@@ -576,7 +576,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 1 && Is30mNotification)
             {
@@ -591,7 +591,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 2 && Is30mNotification)
             {
@@ -606,7 +606,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 145);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period30Flag != 3 && Is30mNotification)
             {
@@ -624,7 +624,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(221), 15, "Wingdings", DeepSkyBlue);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 1 && Is60mNotification)
             {
@@ -639,7 +639,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(222), 15, "Wingdings", Red);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 2 && Is60mNotification)
             {
@@ -654,7 +654,7 @@ void calcSenkouSpanForOninit(int period, bool isNewCandle)
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_XDISTANCE, 150);
          ObjectSetInteger(0, obj_name_arrow, OBJPROP_YDISTANCE, 195);
          ObjectSetText(obj_name_arrow, CharToStr(220), 15, "Wingdings", Gray);
-         if (isNewCandle && IsNotification)
+         if (isNewCandle && (IsNotification || IsMailNotification))
          {
             if (period60Flag != 3 && Is60mNotification)
             {
