@@ -93,7 +93,7 @@ int OnInit()
       k = MtfTimeFrameId / Period();
    SetIndexStyle(2, DRAW_HISTOGRAM, STYLE_DOT, 1, clrAqua);
    SetIndexBuffer(2, SpanA_Buffer);
-   SetIndexShift(2, Kijun * k);
+   SetIndexShift(2, (Kijun - 1) * k);
    SetIndexLabel(2, "Senkou Span A");
    SetIndexStyle(0, DRAW_LINE, STYLE_DOT, 1, clrLime);
    SetIndexShift(0, Kijun * k);
@@ -101,7 +101,7 @@ int OnInit()
 
    SetIndexStyle(3, DRAW_HISTOGRAM, STYLE_DOT, 1, clrRed);
    SetIndexBuffer(3, SpanB_Buffer);
-   SetIndexShift(3, Kijun * k);
+   SetIndexShift(3, (Kijun - 1) * k);
    SetIndexLabel(3, "Senkou Span B");
    SetIndexStyle(1, DRAW_LINE, STYLE_DOT, 1, clrLime);
    SetIndexBuffer(1, SpanB2_Buffer);
