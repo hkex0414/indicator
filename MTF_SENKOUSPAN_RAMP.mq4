@@ -96,7 +96,7 @@ int OnInit()
    SetIndexShift(2, (Kijun - 1) * k);
    SetIndexLabel(2, "Senkou Span A");
    SetIndexStyle(0, DRAW_LINE, STYLE_DOT, 1, clrLime);
-   SetIndexShift(0, Kijun * k);
+   SetIndexShift(0, (Kijun - 1) * k);
    SetIndexBuffer(0, SpanA2_Buffer);
 
    SetIndexStyle(3, DRAW_HISTOGRAM, STYLE_DOT, 1, clrRed);
@@ -105,7 +105,7 @@ int OnInit()
    SetIndexLabel(3, "Senkou Span B");
    SetIndexStyle(1, DRAW_LINE, STYLE_DOT, 1, clrLime);
    SetIndexBuffer(1, SpanB2_Buffer);
-   SetIndexShift(1, Kijun * k);
+   SetIndexShift(1, (Kijun - 1) * k);
 
    deleteAllObj();
    if (IsRamp)
