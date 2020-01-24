@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                     TEMPLETE.mq4 |
+//|                                                     MTF_MACD.mq4 |
 //|                                      Copyright 2020, 崩れかけた家 |
 //|                            https://discordapp.com/invite/N9PMEym |
 //+------------------------------------------------------------------+
@@ -10,8 +10,23 @@
 
 //-----インジゲーター設定------
 // 表示場所
-#property indicator_chart_window
+// #property indicator_chart_window
+#property indicator_buffers 4
 #property indicator_separate_window
+
+#property indicator_color1 Aqua
+#property indicator_width1 1
+#property indicator_type1 DRAW_NONE
+#property indicator_style1 STYLE_SOLID
+
+#property indicator_color2 Red
+#property indicator_width2 1
+#property indicator_type2 DRAW_NONE
+#property indicator_style2 STYLE_SOLID
+
+#property indicator_color3 OrangeRed
+
+#property indicator_color4 BlueViolet
 //---------------------------
 
 //--------ENUM定義-----------
@@ -54,18 +69,28 @@ enum AppliedPriceList
 //------パラメーター定義------
 // Pascal方式
 // MTF用
-int MtfTimeFrameId;
-extern TimeFrameList MtfTimeFrame = Current_timeFrame; // MTFで表示させる時間軸
+TimeFrameList MtfTimeFrame = Current_timeFrame; // MTFで表示させる時間軸
+extern int FastEmaPeriod = 12;                  // 短期EMA期間
+extern int SlowEmaPeriod = 26;                  // 長期EMA期間
+extern int SignalPeriod = 9;                    // MACD SMA
+
+extern AppliedPriceList MaAppliedPrice = CLOSE; // 適用先
 //---------------------------
 
 //-------変数・定数定義-------
 // Camel方式
 // アラート重複排除用
 datetime b4Time;
+int mtfTimeFrameId;
+int maAppliedPriceId;
 //---------------------------
 
 //----------配列定義---------
 // Camel方式
+double macd[];
+double signal[];
+double up[];
+double down[];
 //---------------------------
 
 //+------------------------------------------------------------------+
@@ -73,6 +98,16 @@ datetime b4Time;
 //+------------------------------------------------------------------+
 int OnInit()
 {
+   SetIndexBuffer(0, macd);
+   SetIndexBuffer(1, signal);
+   SetIndexBuffer(2, up);
+   SetIndexStyle(2, DRAW_ARROW, STYLE_SOLID, 0.1);
+   SetIndexArrow(2, 108);
+   SetIndexBuffer(3, down);
+   SetIndexStyle(3, DRAW_ARROW, STYLE_SOLID, 0.1);
+   SetIndexArrow(3, 108);
+   mtfTimeFrameId = MtfTimeFrame;
+   maAppliedPriceId = MaAppliedPrice;
    return (INIT_SUCCEEDED);
 }
 //+------------------------------------------------------------------+
@@ -103,6 +138,43 @@ int OnCalculate(const int rates_total,
    for (int i = limit - 1; i >= 0; i--)
    {
       //インジ計算処理
+      int shift = iBarShift(NULL, mtfTimeFrameId, time[i], false);
+      double fastMa = iMA(NULL, mtfTimeFrameId, FastEmaPeriod, 0, MODE_EMA, maAppliedPriceId, shift);
+      double slowMa = iMA(NULL, mtfTimeFrameId, SlowEmaPeriod, 0, MODE_EMA, maAppliedPriceId, shift);
+      // double fastMa = iMA(NULL, 0, FastEmaPeriod, 0, MODE_EMA, maAppliedPriceId, i);
+      // double slowMa = iMA(NULL, 0, SlowEmaPeriod, 0, MODE_EMA, maAppliedPriceId, i);
+      macd[i] = fastMa - slowMa;
+
+      if (macd[i] >= 0)
+      {
+         up[i] = macd[i];
+      }
+      else if (macd[i] < 0)
+      {
+         down[i] = macd[i];
+      }
+      // macd[i] = NormalizeDouble(macd[i], MarketInfo(Symbol(), MODE_DIGITS) + 1);
    }
+   // for (int i = limit - 1; i >= 0; i--)
+   // {
+   //    //インジ計算処理
+   //    signal[i] = iMAOnArray(macd, 0, SignalPeriod, 0, MODE_EMA, i);
+   //    // signal[i] = NormalizeDouble(signal[i], MarketInfo(Symbol(), MODE_DIGITS) + 1);
+   // }
+   // for (int i = limit - 1; i >= 0; i--)
+   // {
+   //    //インジ計算処理
+   //    double diffarence = macd[i] - signal[i];
+   //    if (diffarence >= 0)
+   //    {
+   //       up[i] = diffarence;
+   //       // up[i] = NormalizeDouble(diffarence, MarketInfo(Symbol(), MODE_DIGITS) + 1);
+   //    }
+   //    else if (diffarence < 0)
+   //    {
+   //       down[i] = diffarence;
+   //       // down[i] = NormalizeDouble(diffarence, MarketInfo(Symbol(), MODE_DIGITS) + 1);
+   //    }
+   // }
    return (rates_total);
 }
